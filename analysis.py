@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Pfad zu Arbeitsverzeichnis
 PATH_WD = Path(__file__).parent
@@ -49,4 +50,36 @@ print("Korrlelation zwischen der Lebenserwartung von Maennern und BIP: ", Korrel
 print("Korrlelation zwischen der Lebenserwartung von Frauen und BIP: ", Korrelationen["Frauen"]["durschnittlichesBIP"])
 
 # Grafik, welche die Entwicklung von BIP und Lebenserwartungen über die Zeit zeigt
-sns.lineplot(data=df_lebenserwartung, x="Jahr", y=["Frauen", "Maenner", "durschnittlichesBIP"])
+fig, ax1 = plt.subplots()
+# Füge 2. Y-Achse hinzu
+ax2= ax1.twinx()
+
+# Grafik für Lebenserwartungen von Frauen und Männern
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="Frauen", ax=ax1, color="red")
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="Maenner", ax=ax1, color="blue").set(
+    ylabel="Lebenserwartung(Jahr)",
+    xlabel = "Jahr",
+    title="Lebenserwartung vs. BIP",
+)
+
+# Grafik für BIP
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="durschnittlichesBIP", ax=ax2, color="black").set(
+    ylabel="BIP(Mrd. Euro)"
+)
+
+# Rotiere x-Werte
+ax1.tick_params(axis="x", rotation=45)
+# Fuege Legende hinzu
+ax1.legend(handles = ax1.get_lines()+ax2.get_lines(), 
+           labels=["Lebenserwartung Frauen", "Lebenserwartung Männer","BIP"],
+           loc="lower right")
+# Aendere Reihenfolge der x-Werte
+ax1.xaxis.set_inverted(True)
+# Setze die Grenzen der y-Werte für beide Y-Achsen
+ax1.set_ylim(ymin=0, ymax=100)
+ax2.set_ylim(ymin=0, ymax=100)
+# Passe Höhe der Grafik an
+fig.set_figheight(fig.get_figheight() + 2.5)
+
+plt.show()
+
