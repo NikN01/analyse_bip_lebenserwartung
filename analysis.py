@@ -11,19 +11,27 @@ PATH_BRUTTOINLANDSPRODUKT = PATH_WD / "daten/bruttoinlandsprodukt_bundeslaender_
 PATH_LEBENSERWARTUNG = PATH_WD / "daten/lebenserwartung_bundeslaender.csv"
 
 # Daten einlesen Bruttoinlandsprodukt
-df_bruttoinlandsprodukt = pd.read_excel(PATH_BRUTTOINLANDSPRODUKT, dtype={})
+df_bruttoinlandsprodukt = pd.read_excel(PATH_BRUTTOINLANDSPRODUKT, dtype={"Land":pd.StringDtype()})
 df_bruttoinlandsprodukt = df_bruttoinlandsprodukt[df_bruttoinlandsprodukt["Land"] == "Brandenburg"].reset_index(drop=True)
 for year in range(2008, 2024):
     df_bruttoinlandsprodukt[year] = df_bruttoinlandsprodukt[year].astype("Float64")
-#print(df_bruttoinlandsprodukt)
-#print(df_bruttoinlandsprodukt.info())
+print(df_bruttoinlandsprodukt)
+print(df_bruttoinlandsprodukt.info())
+
+assert df_bruttoinlandsprodukt.isnull().values.any() == False
+assert df_bruttoinlandsprodukt.duplicated().values.any() == False
 
 # Daten einlesen Lebenserwartung
-df_lebenserwartung = pd.read_csv(PATH_LEBENSERWARTUNG, nrows=238, sep=";")#, dtype={"Frauen": "Float64", "Maenner":"Float64"})
+df_lebenserwartung = pd.read_csv(PATH_LEBENSERWARTUNG, nrows=238, sep=";", dtype={
+    "Laenderschluessel":int, "Bundesland":pd.StringDtype(), "Jahr":pd.StringDtype()
+})
 df_lebenserwartung["Maenner"] = df_lebenserwartung["Maenner"].apply(lambda x: x.replace(",", ".")).astype("Float64")
 df_lebenserwartung["Frauen"] = df_lebenserwartung["Frauen"].apply(lambda x: x.replace(",", ".")).astype("Float64")
-#print(df_lebenserwartung)
-#print(df_lebenserwartung.info())
+print(df_lebenserwartung)
+print(df_lebenserwartung.info())
+
+assert df_lebenserwartung.isnull().values.any() == False
+assert df_lebenserwartung.duplicated().values.any() == False
 
 # Nach Daten fuer Brandenburg sortieren
 df_lebenserwartung = df_lebenserwartung[df_lebenserwartung["Laenderschluessel"] == 12].reset_index(drop=True)
