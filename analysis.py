@@ -71,7 +71,7 @@ sns.lineplot(data=df_lebenserwartung, x="Jahr", y="Maenner", ax=ax1, color="blue
 )
 
 # Grafik für BIP
-sns.lineplot(data=df_lebenserwartung, x="Jahr", y="durschnittlichesBIP", ax=ax2, color="black").set(
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="durschnittlichesBIP", ax=ax1, color="black").set(
     ylabel="BIP(Mrd. Euro)"
 )
 
@@ -83,11 +83,40 @@ ax1.legend(handles = ax1.get_lines()+ax2.get_lines(),
            loc="lower right")
 # Aendere Reihenfolge der x-Werte
 ax1.xaxis.set_inverted(True)
-# Setze die Grenzen der y-Werte für beide Y-Achsen
+#Setze die Grenzen der y-Werte für beide Y-Achsen
 ax1.set_ylim(ymin=0, ymax=100)
 ax2.set_ylim(ymin=0, ymax=100)
-# Passe Höhe der Grafik an
+#Passe Höhe der Grafik an
 fig.set_figheight(fig.get_figheight() + 2.5)
 
 plt.show()
 
+# Grafik, welche Lebenserwartung und BIP einzeln zeigt
+fig, axs = plt.subplots(1, 2)
+
+# Grafik fuer Lebenserwartung
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="Frauen", ax=axs[0], color="red")
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="Maenner", ax=axs[0], color="blue").set(
+    ylabel="Lebenserwartung(Jahr)",
+    xlabel = "Jahr",
+    title="Lebenserwartung",
+)
+
+# Grafik fuer BIP
+sns.lineplot(data=df_lebenserwartung, x="Jahr", y="durschnittlichesBIP", ax=axs[1], color="black").set(
+    ylabel="BIP(Mrd. Euro)",
+    xlabel="Jahr",
+    title="BIP",
+)
+
+# Fuer jeden Plot...
+for ax in axs:
+    # Aendere die Reihenfolge der x-Werte
+    ax.xaxis.set_inverted(True)
+    # Rotiere x-Werte
+    ax.tick_params(axis="x", rotation=45)
+
+fig.set_figwidth(fig.get_figwidth() + 5)
+plt.subplots_adjust(wspace=0.25, bottom=0.25)
+
+plt.show()
