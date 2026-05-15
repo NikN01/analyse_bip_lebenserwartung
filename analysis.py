@@ -116,6 +116,7 @@ for ax in axs:
     # Rotiere x-Werte
     ax.tick_params(axis="x", rotation=45)
 
+# Aendere Dimensionen der Grafik
 fig.set_figwidth(fig.get_figwidth() + 5)
 plt.subplots_adjust(wspace=0.25, bottom=0.25)
 
