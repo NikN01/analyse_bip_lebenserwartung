@@ -10,6 +10,9 @@ PATH_WD = Path(__file__).parent
 PATH_BRUTTOINLANDSPRODUKT = PATH_WD / "daten/bruttoinlandsprodukt_bundeslaender_bearbeitet.xlsx"
 PATH_LEBENSERWARTUNG = PATH_WD / "daten/lebenserwartung_bundeslaender.csv"
 
+# Pfad zu Abbildungen
+PATH_FOLDER_ABBILDUNGEN = PATH_WD / "abbildungen"
+
 # Daten einlesen Bruttoinlandsprodukt
 df_bruttoinlandsprodukt = pd.read_excel(PATH_BRUTTOINLANDSPRODUKT, dtype={"Land":pd.StringDtype()})
 df_bruttoinlandsprodukt = df_bruttoinlandsprodukt[df_bruttoinlandsprodukt["Land"] == "Brandenburg"].reset_index(drop=True)
@@ -89,6 +92,7 @@ ax2.set_ylim(ymin=0, ymax=100)
 #Passe Höhe der Grafik an
 fig.set_figheight(fig.get_figheight() + 2.5)
 
+plt.savefig(PATH_FOLDER_ABBILDUNGEN / "grafik_bip_lebenserwartung_zusammen.png")
 plt.show()
 
 # Grafik, welche Lebenserwartung und BIP einzeln zeigt
@@ -120,4 +124,5 @@ for ax in axs:
 fig.set_figwidth(fig.get_figwidth() + 5)
 plt.subplots_adjust(wspace=0.25, bottom=0.25)
 
+plt.savefig(PATH_FOLDER_ABBILDUNGEN / "grafik_bip_lebenserwartung_einzeln.png")
 plt.show()
