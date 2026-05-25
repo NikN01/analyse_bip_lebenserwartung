@@ -1,8 +1,16 @@
+# Analysiere die Korreltaion zwischen BIP und Lebenserwartung im Land Brandenburg.
+
+# Input: Daten in Ordner /daten
+# Output: Grafiken im Ordner /abbildungen
+# Datum: 25.05
+# Autor: Nik N.
+
 import pandas as pd
 from pathlib import Path
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+### Pfade ###
 # Pfad zu Arbeitsverzeichnis
 PATH_WD = Path(__file__).parent
 
@@ -13,14 +21,18 @@ PATH_LEBENSERWARTUNG = PATH_WD / "daten/lebenserwartung_bundeslaender.csv"
 # Pfad zu Abbildungen
 PATH_FOLDER_ABBILDUNGEN = PATH_WD / "abbildungen"
 
+### Einlesen und bearbeiten der Daten ###
+
 # Daten einlesen Bruttoinlandsprodukt
 df_bruttoinlandsprodukt = pd.read_excel(PATH_BRUTTOINLANDSPRODUKT, dtype={"Land":pd.StringDtype()})
 df_bruttoinlandsprodukt = df_bruttoinlandsprodukt[df_bruttoinlandsprodukt["Land"] == "Brandenburg"].reset_index(drop=True)
+# Aendere Format der Jahresangaben
 for year in range(2008, 2024):
     df_bruttoinlandsprodukt[year] = df_bruttoinlandsprodukt[year].astype("Float64")
-print(df_bruttoinlandsprodukt)
-print(df_bruttoinlandsprodukt.info())
+# print(df_bruttoinlandsprodukt)
+# print(df_bruttoinlandsprodukt.info())
 
+# Tests, dass die Daten keine Duplikate oder Null-Werte enthalten
 assert df_bruttoinlandsprodukt.isnull().values.any() == False
 assert df_bruttoinlandsprodukt.duplicated().values.any() == False
 
@@ -28,11 +40,13 @@ assert df_bruttoinlandsprodukt.duplicated().values.any() == False
 df_lebenserwartung = pd.read_csv(PATH_LEBENSERWARTUNG, nrows=238, sep=";", dtype={
     "Laenderschluessel":int, "Bundesland":pd.StringDtype(), "Jahr":pd.StringDtype()
 })
+# Aendere Format der Jahresangaben
 df_lebenserwartung["Maenner"] = df_lebenserwartung["Maenner"].apply(lambda x: x.replace(",", ".")).astype("Float64")
 df_lebenserwartung["Frauen"] = df_lebenserwartung["Frauen"].apply(lambda x: x.replace(",", ".")).astype("Float64")
 print(df_lebenserwartung)
 print(df_lebenserwartung.info())
 
+# Tests, dass die Daten keine Duplikate oder Null-Werte enthalten
 assert df_lebenserwartung.isnull().values.any() == False
 assert df_lebenserwartung.duplicated().values.any() == False
 
@@ -55,10 +69,15 @@ def helper_bip(yrs:str):
     return mean_bip
 
 df_lebenserwartung["durschnittlichesBIP"] = df_lebenserwartung["Jahr"].apply(helper_bip)
+
+### Korrelation zwischen BIP und Lebenserwartung
+
 # Korrelation berechnen zwischen Lebenserwartung und BIP fuer Frauen und Maenner
 Korrelationen = df_lebenserwartung[["Frauen", "Maenner", "durschnittlichesBIP"]].corr()
 print("Korrlelation zwischen der Lebenserwartung von Maennern und BIP: ", Korrelationen["Maenner"]["durschnittlichesBIP"])
 print("Korrlelation zwischen der Lebenserwartung von Frauen und BIP: ", Korrelationen["Frauen"]["durschnittlichesBIP"])
+
+### Grafiken ###
 
 # Grafik, welche die Entwicklung von BIP und Lebenserwartungen über die Zeit zeigt
 fig, ax1 = plt.subplots()
@@ -86,13 +105,14 @@ ax1.legend(handles = ax1.get_lines()+ax2.get_lines(),
            loc="lower right")
 # Aendere Reihenfolge der x-Werte
 ax1.xaxis.set_inverted(True)
-#Setze die Grenzen der y-Werte für beide Y-Achsen
+# Setze die Grenzen der y-Werte für beide Y-Achsen
 ax1.set_ylim(ymin=0, ymax=100)
 ax2.set_ylim(ymin=0, ymax=100)
-#Passe Höhe der Grafik an
+# Passe Höhe der Grafik an
 fig.set_figheight(fig.get_figheight() + 2.5)
-
+# Grafik speichern
 plt.savefig(PATH_FOLDER_ABBILDUNGEN / "grafik_bip_lebenserwartung_zusammen.png")
+# Grafik anzeigen
 plt.show()
 
 # Grafik, welche Lebenserwartung und BIP einzeln zeigt
@@ -124,5 +144,7 @@ for ax in axs:
 fig.set_figwidth(fig.get_figwidth() + 5)
 plt.subplots_adjust(wspace=0.25, bottom=0.25)
 
+# Grafik speichern
 plt.savefig(PATH_FOLDER_ABBILDUNGEN / "grafik_bip_lebenserwartung_einzeln.png")
+# Grafik anzeigen
 plt.show()
